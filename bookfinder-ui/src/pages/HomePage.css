@@ -1,0 +1,33 @@
+.hero-section {
+  text-align: center;
+  padding: 48px 20px 40px;
+}
+
+.hero-section h1 {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.hero-section p {
+  color: #666;
+  font-size: 1.1em;
+  margin-bottom: 28px;
+}
+
+.hero-search {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.popular-section {
+  margin-top: 32px;
+}
+
+.popular-section h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #1a1a2e;
+}
