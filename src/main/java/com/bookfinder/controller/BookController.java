@@ -22,8 +22,9 @@ public class BookController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "ratingsCount") String sortBy,
-            @RequestParam(defaultValue = "DESC") String direction) {
-        return bookService.getBooks(page, size, sortBy, direction);
+            @RequestParam(defaultValue = "DESC") String direction,
+            @RequestParam(required = false) String genre) {
+        return bookService.getBooks(page, size, sortBy, direction, genre);
     }
 
     @GetMapping("/{bookId}")

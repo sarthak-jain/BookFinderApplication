@@ -19,7 +19,8 @@ public class BookService {
         this.driver = driver;
     }
 
-    public PaginatedResponse<BookSearchResultDTO> getBooks(int page, int size, String sortBy, String direction) {
+    public PaginatedResponse<BookSearchResultDTO> getBooks(int page, int size, String sortBy,
+                                                            String direction, String genre) {
         String sortField = switch (sortBy) {
             case "title" -> "b.title";
             case "pubYear" -> "b.pubYear";
@@ -28,18 +29,29 @@ public class BookService {
         };
         String dir = "ASC".equalsIgnoreCase(direction) ? "ASC" : "DESC";
 
+        Map<String, Object> params = new HashMap<>();
+        params.put("skip", (long) page * size);
+        params.put("limit", size);
+
+        String genreFilter = "";
+        if (genre != null && !genre.isBlank()) {
+            genreFilter = " {genre: $genre}";
+            params.put("genre", genre);
+        }
+
         try (Session session = session()) {
-            long total = session.run("MATCH (b:Book) RETURN count(b) AS cnt")
+            long total = session.run(
+                    String.format("MATCH (b:Book%s) RETURN count(b) AS cnt", genreFilter), params)
                     .single().get("cnt").asLong();
 
             String query = String.format("""
-                MATCH (b:Book)
+                MATCH (b:Book%s)
                 RETURN b
                 ORDER BY %s %s
                 SKIP $skip LIMIT $limit
-                """, sortField, dir);
+                """, genreFilter, sortField, dir);
 
-            var result = session.run(query, Map.of("skip", (long) page * size, "limit", size));
+            var result = session.run(query, params);
             List<BookSearchResultDTO> books = new ArrayList<>();
             while (result.hasNext()) {
                 Node node = result.next().get("b").asNode();
@@ -57,7 +69,7 @@ public class BookService {
                 OPTIONAL MATCH (b)-[sa:SHELVED_AS]->(s:Shelf)
                 OPTIONAL MATCH (b)-[:IN_SERIES]->(ser:Series)
                 RETURN b,
-                       collect(DISTINCT {authorId: a.authorId, role: w.role}) AS authors,
+                       collect(DISTINCT {authorId: a.authorId, name: a.name, role: w.role}) AS authors,
                        collect(DISTINCT {name: s.name, count: sa.count}) AS shelves,
                        collect(DISTINCT ser.seriesId) AS seriesIds
                 """, Map.of("bookId", bookId));
@@ -75,6 +87,7 @@ public class BookService {
                 if (aMap.get("authorId") != null) {
                     authors.add(new AuthorDTO(
                             Objects.toString(aMap.get("authorId"), ""),
+                            Objects.toString(aMap.get("name"), ""),
                             Objects.toString(aMap.get("role"), "")
                     ));
                 }
@@ -173,6 +186,7 @@ public class BookService {
         dto.setImageUrl(node.get("imageUrl").asString(""));
         dto.setPublisher(node.get("publisher").asString(""));
         dto.setPubYear(node.get("pubYear").asInt(0));
+        dto.setGenre(node.get("genre").asString(""));
         return dto;
     }
 
@@ -190,6 +204,7 @@ public class BookService {
         dto.setImageUrl(node.get("imageUrl").asString(""));
         dto.setUrl(node.get("url").asString(""));
         dto.setWorkId(node.get("workId").asString(""));
+        dto.setGenre(node.get("genre").asString(""));
         return dto;
     }
 }

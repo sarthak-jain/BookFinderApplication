@@ -3,8 +3,16 @@ import { Link } from 'react-router-dom';
 import StarRating from './StarRating';
 import './BookCard.css';
 
+const GENRE_COLORS = {
+  young_adult: { bg: '#EDE7F6', text: '#7B1FA2', label: 'Young Adult' },
+  comics_graphic: { bg: '#FFF3E0', text: '#E65100', label: 'Comics' },
+  mystery_thriller_crime: { bg: '#FCE4EC', text: '#C62828', label: 'Mystery' },
+  history_biography: { bg: '#E8F5E9', text: '#2E7D32', label: 'History' },
+};
+
 function BookCard({ book }) {
   const hasImage = book.imageUrl && !book.imageUrl.includes('nophoto');
+  const genreInfo = book.genre ? GENRE_COLORS[book.genre] : null;
 
   return (
     <div className="book-card">
@@ -32,6 +40,14 @@ function BookCard({ book }) {
               <span className="book-card-count">{book.ratingsCount.toLocaleString()} ratings</span>
             )}
           </div>
+          {genreInfo && (
+            <span
+              className="book-card-genre-badge"
+              style={{ background: genreInfo.bg, color: genreInfo.text }}
+            >
+              {genreInfo.label}
+            </span>
+          )}
         </div>
       </Link>
     </div>

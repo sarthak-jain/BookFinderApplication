@@ -13,6 +13,7 @@ import java.util.*;
 public class BookDataLoader {
 
     private static final Logger log = LoggerFactory.getLogger(BookDataLoader.class);
+    private static final int MAX_SHELVES_PER_BOOK = 15;
     private static final Set<String> ORGANIZATIONAL_SHELVES = Set.of(
             "to-read", "currently-reading", "owned", "books-i-own", "owned-books",
             "i-own", "my-books", "my-library", "have", "library", "kindle",
@@ -30,8 +31,12 @@ public class BookDataLoader {
         this.batchSize = batchSize;
     }
 
-    public void loadBooks(String booksFilePath, Set<String> selectedBookIds) throws IOException {
-        log.info("Loading {} books into Neo4j...", selectedBookIds.size());
+    public void loadBooks(String booksFilePath, Set<String> selectedBookIds,
+                          String genreKey, String genreName) throws IOException {
+        log.info("Loading {} books for genre '{}' into Neo4j...", selectedBookIds.size(), genreName);
+
+        // Create Genre node first
+        createGenreNode(genreKey, genreName);
 
         List<Map<String, Object>> batch = new ArrayList<>(batchSize);
         List<Map<String, Object>> authorBatch = new ArrayList<>();
@@ -64,6 +69,7 @@ public class BookDataLoader {
                 bookMap.put("isbn", node.path("isbn").asText(""));
                 bookMap.put("isbn13", node.path("isbn13").asText(""));
                 bookMap.put("asin", node.path("asin").asText(""));
+                bookMap.put("genre", genreKey);
                 batch.add(bookMap);
 
                 // Collect authors
@@ -92,7 +98,7 @@ public class BookDataLoader {
                     }
                 }
 
-                // Collect shelves (top 20, excluding organizational)
+                // Collect shelves (top 15, excluding organizational)
                 JsonNode shelves = node.path("popular_shelves");
                 if (shelves.isArray()) {
                     int shelfCount = 0;
@@ -108,7 +114,7 @@ public class BookDataLoader {
                         shelfMap.put("count", count);
                         shelfBatch.add(shelfMap);
                         shelfCount++;
-                        if (shelfCount >= 20) break;
+                        if (shelfCount >= MAX_SHELVES_PER_BOOK) break;
                     }
                 }
 
@@ -138,13 +144,24 @@ public class BookDataLoader {
         if (!batch.isEmpty()) {
             flushBooks(batch);
         }
-        log.info("Loaded {} book nodes", loaded);
+        log.info("Loaded {} book nodes for genre '{}'", loaded, genreName);
 
-        // Now flush authors, series, shelves, similar in batches
+        // Flush related data
         flushAuthors(authorBatch);
         flushSeries(seriesBatch);
         flushShelves(shelfBatch);
         flushSimilar(similarBatch);
+        flushGenreRelationships(genreKey);
+    }
+
+    private void createGenreNode(String genreKey, String genreName) {
+        try (Session session = driver.session(SessionConfig.forDatabase(database))) {
+            session.run("""
+                MERGE (g:Genre {key: $key})
+                SET g.name = $name
+                """, Map.of("key", genreKey, "name", genreName)).consume();
+        }
+        log.info("Created/updated Genre node: {} ({})", genreName, genreKey);
     }
 
     private void flushBooks(List<Map<String, Object>> batch) {
@@ -165,7 +182,8 @@ public class BookDataLoader {
                     book.workId = b.workId,
                     book.isbn = b.isbn,
                     book.isbn13 = b.isbn13,
-                    book.asin = b.asin
+                    book.asin = b.asin,
+                    book.genre = b.genre
                 """, Map.of("batch", batch)).consume();
         }
     }
@@ -237,6 +255,18 @@ public class BookDataLoader {
             }
         }
         log.info("Loaded similar_to relationships");
+    }
+
+    private void flushGenreRelationships(String genreKey) {
+        log.info("Creating BELONGS_TO relationships for genre '{}'...", genreKey);
+        try (Session session = driver.session(SessionConfig.forDatabase(database))) {
+            session.run("""
+                MATCH (b:Book {genre: $genreKey})
+                MATCH (g:Genre {key: $genreKey})
+                MERGE (b)-[:BELONGS_TO]->(g)
+                """, Map.of("genreKey", genreKey)).consume();
+        }
+        log.info("Created BELONGS_TO relationships for genre '{}'", genreKey);
     }
 
     private static String truncate(String s, int maxLen) {

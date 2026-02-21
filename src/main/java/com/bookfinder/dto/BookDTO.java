@@ -17,6 +17,7 @@ public class BookDTO {
     private String workId;
     private List<AuthorDTO> authors;
     private List<ShelfDTO> shelves;
+    private String genre;
     private List<String> seriesIds;
 
     public BookDTO() {}
@@ -49,6 +50,8 @@ public class BookDTO {
     public void setAuthors(List<AuthorDTO> authors) { this.authors = authors; }
     public List<ShelfDTO> getShelves() { return shelves; }
     public void setShelves(List<ShelfDTO> shelves) { this.shelves = shelves; }
+    public String getGenre() { return genre; }
+    public void setGenre(String genre) { this.genre = genre; }
     public List<String> getSeriesIds() { return seriesIds; }
     public void setSeriesIds(List<String> seriesIds) { this.seriesIds = seriesIds; }
 }

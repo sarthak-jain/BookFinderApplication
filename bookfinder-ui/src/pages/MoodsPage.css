@@ -1,0 +1,83 @@
+.moods-page {
+  padding-top: 32px;
+}
+
+.moods-page h1 {
+  font-size: 2em;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.moods-subtitle {
+  color: #666;
+  margin-bottom: 32px;
+}
+
+.moods-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.mood-tile {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.mood-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.mood-tile-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.mood-tile h3 {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 6px;
+  margin-top: 4px;
+}
+
+.mood-tile p {
+  font-size: 0.85em;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.mood-tile-shelves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mood-shelf-tag {
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75em;
+  color: #888;
+}
+
+.mood-tile-custom {
+  border: 2px dashed #ccc;
+  background: #fafafa;
+}
+
+.mood-tile-custom:hover {
+  border-color: #4A90D9;
+}

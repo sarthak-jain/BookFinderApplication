@@ -22,7 +22,8 @@ public class SearchService {
 
     public PaginatedResponse<BookSearchResultDTO> search(String query, int page, int size,
                                                           Double minRating, Integer minYear,
-                                                          Integer maxYear, List<String> shelves) {
+                                                          Integer maxYear, List<String> shelves,
+                                                          String genre) {
         String luceneQuery = sanitizeLuceneQuery(query);
         if (luceneQuery.isBlank()) {
             return new PaginatedResponse<>(List.of(), page, size, 0);
@@ -46,6 +47,10 @@ public class SearchService {
         if (maxYear != null) {
             filters.add("b.pubYear <= $maxYear");
             params.put("maxYear", maxYear);
+        }
+        if (genre != null && !genre.isBlank()) {
+            filters.add("b.genre = $genre");
+            params.put("genre", genre);
         }
 
         if (shelves != null && !shelves.isEmpty()) {
@@ -131,6 +136,7 @@ public class SearchService {
         dto.setImageUrl(node.get("imageUrl").asString(""));
         dto.setPublisher(node.get("publisher").asString(""));
         dto.setPubYear(node.get("pubYear").asInt(0));
+        dto.setGenre(node.get("genre").asString(""));
         return dto;
     }
 }

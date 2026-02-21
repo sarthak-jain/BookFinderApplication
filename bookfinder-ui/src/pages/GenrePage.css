@@ -1,0 +1,55 @@
+.genre-page {
+  padding-top: 24px;
+}
+
+.genre-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.genre-header h1 {
+  font-size: 1.8em;
+  color: #1a1a2e;
+}
+
+.genre-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.genre-sort label {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.genre-sort select {
+  padding: 6px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.9em;
+  background: #fff;
+}
+
+.genre-shelves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.genre-shelf-chip {
+  padding: 4px 12px;
+  background: #f3f4f6;
+  border-radius: 16px;
+  font-size: 0.82em;
+  color: #555;
+}
+
+.empty-state {
+  text-align: center;
+  color: #888;
+  padding: 40px 20px;
+}

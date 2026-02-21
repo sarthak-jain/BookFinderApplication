@@ -211,6 +211,7 @@ public class RecommendationService {
         dto.setRatingsCount(node.get("ratingsCount").asInt(0));
         dto.setImageUrl(node.get("imageUrl").asString(""));
         dto.setPubYear(node.get("pubYear").asInt(0));
+        dto.setGenre(node.get("genre").asString(""));
         return dto;
     }
 }

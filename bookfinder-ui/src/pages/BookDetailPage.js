@@ -69,13 +69,22 @@ function BookDetailPage() {
           )}
         </div>
         <div className="book-detail-info">
-          <h1>{book.title}</h1>
+          <div className="book-title-row">
+            <h1>{book.title}</h1>
+            {book.genre && (
+              <Link to={`/genres/${book.genre}`} className="book-detail-genre-badge">
+                {book.genre.replace(/_/g, ' ')}
+              </Link>
+            )}
+          </div>
           {book.authors && book.authors.length > 0 && (
             <div className="book-authors">
               by {book.authors.map((a, i) => (
                 <span key={a.authorId}>
-                  <Link to={`/explore?authorId=${a.authorId}`}>{a.authorId}</Link>
-                  {a.role && <span className="author-role"> ({a.role})</span>}
+                  <Link to={`/explore?authorId=${a.authorId}`}>
+                    {a.name || a.authorId}
+                  </Link>
+                  {a.role && a.role !== 'Author' && <span className="author-role"> ({a.role})</span>}
                   {i < book.authors.length - 1 && ', '}
                 </span>
               ))}

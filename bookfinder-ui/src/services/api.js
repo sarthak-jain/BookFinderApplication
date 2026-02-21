@@ -6,8 +6,11 @@ const api = axios.create({
 });
 
 // Books
-export const getBooks = (page = 0, size = 20, sortBy = 'ratingsCount', direction = 'DESC') =>
-  api.get('/books', { params: { page, size, sortBy, direction } }).then(r => r.data);
+export const getBooks = (page = 0, size = 20, sortBy = 'ratingsCount', direction = 'DESC', genre = null) => {
+  const params = { page, size, sortBy, direction };
+  if (genre) params.genre = genre;
+  return api.get('/books', { params }).then(r => r.data);
+};
 
 export const getBookById = (bookId) =>
   api.get(`/books/${bookId}`).then(r => r.data);
@@ -31,6 +34,32 @@ export const getAuthor = (authorId) =>
 
 export const getAuthorBooks = (authorId, page = 0, size = 20) =>
   api.get(`/authors/${authorId}/books`, { params: { page, size } }).then(r => r.data);
+
+// Genres
+export const getGenres = () =>
+  api.get('/genres').then(r => r.data);
+
+export const getGenreBooks = (genreKey, page = 0, size = 20, sortBy = 'ratingsCount', direction = 'DESC') =>
+  api.get(`/genres/${genreKey}/books`, { params: { page, size, sortBy, direction } }).then(r => r.data);
+
+export const getGenreTopShelves = (genreKey, limit = 20) =>
+  api.get(`/genres/${genreKey}/top-shelves`, { params: { limit } }).then(r => r.data);
+
+export const getAllTopShelves = (limit = 50) =>
+  api.get('/genres/all/top-shelves', { params: { limit } }).then(r => r.data);
+
+// Moods
+export const getMoods = () =>
+  api.get('/moods').then(r => r.data);
+
+export const getMood = (moodKey) =>
+  api.get(`/moods/${moodKey}`).then(r => r.data);
+
+export const getMoodBooks = (moodKey, limit = 20, genre = 'all') =>
+  api.get(`/moods/${moodKey}/books`, { params: { limit, genre } }).then(r => r.data);
+
+export const getCustomMoodBooks = (shelves, genre = null, limit = 20) =>
+  api.post('/moods/custom/books', { shelves, genre, limit }).then(r => r.data);
 
 // Recommendations
 export const getRecommendations = (bookId, strategy = 'hybrid', limit = 10) =>

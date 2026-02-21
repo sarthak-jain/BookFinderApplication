@@ -61,19 +61,47 @@
 - Heavier than a Python/FastAPI or Node.js/Express alternative
 - JVM startup time is slower (mitigated by Spring Boot 3.x improvements)
 
-## Why Top-10K Subset by ratings_count?
+## Why Multi-Genre with Genre Property + Genre Node?
 
-**Decision**: Select the top 10,000 books by `ratings_count` descending for the demo dataset.
+**Decision**: Store genre as both a `book.genre` property and a `(:Book)-[:BELONGS_TO]->(:Genre)` relationship.
+
+**Rationale**:
+- `book.genre` property enables fast Cypher filtering (`WHERE b.genre = 'mystery_thriller_crime'`) with index support
+- `Genre` node + `BELONGS_TO` relationship enables graph traversals (e.g., "books in the same genre that share shelves")
+- Each book belongs to exactly one genre (determined by which dataset file it came from)
+- 4 genres loaded: Young Adult, Comics & Graphic, Mystery/Thriller/Crime, History & Biography
+
+**Tradeoffs**:
+- Slight data duplication (genre stored in two places)
+- A book could theoretically fit multiple genres, but our data source assigns each book to one genre
+
+## Why Mood-Based Discovery via Shelf Mapping?
+
+**Decision**: Map 10 curated moods to combinations of Goodreads shelf names, plus a custom mood builder.
+
+**Rationale**:
+- Goodreads shelves already capture mood/tone (e.g., "dark", "feel-good", "suspense") without needing NLP
+- Shelf-based matching uses existing `SHELVED_AS` relationships — no new data required
+- Books matching more mood-relevant shelves rank higher (multi-shelf overlap scoring)
+- Custom mood builder lets users combine shelves freely for personalized discovery
+
+**Tradeoffs**:
+- Mood accuracy depends on shelf naming conventions (some genres have better mood-shelf coverage)
+- Not all moods map cleanly to shelves (e.g., "nostalgic" is hard to express via shelves)
+
+## Why 15K Books per Genre?
+
+**Decision**: Select the top 15,000 books by `ratings_count` per genre (60K total across 4 genres).
 
 **Rationale**:
 - High-engagement books have more interactions, reviews, and SIMILAR_TO edges — resulting in a denser, more useful graph
-- 10K books fits comfortably within AuraDB free tier limits
+- 60K books + related nodes fits within AuraDB free tier limits (~129K nodes, ~376K relationships)
 - Ensures collaborative filtering has enough user overlap to produce meaningful recommendations
 - Popular books are more recognizable, making demos more relatable
 
 **Tradeoffs**:
 - Excludes niche/lesser-known books that might benefit from recommendation
-- The subset is biased toward popular titles
+- The subset is biased toward popular titles within each genre
 
 ## Why Hybrid Recommendation Strategy?
 

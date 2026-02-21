@@ -1,3 +1,27 @@
+.book-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.book-detail-genre-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 12px;
+  background: #f3f4f6;
+  color: #4A90D9;
+  font-size: 0.55em;
+  font-weight: 600;
+  text-decoration: none;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.book-detail-genre-badge:hover {
+  background: #e8f0fe;
+}
+
 .book-detail-header {
   display: flex;
   gap: 32px;

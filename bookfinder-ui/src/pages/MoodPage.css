@@ -1,0 +1,106 @@
+.mood-page {
+  padding-top: 24px;
+}
+
+.mood-page-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 24px;
+  background: #fff;
+  border-radius: 12px;
+  border-left: 4px solid;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 24px;
+}
+
+.mood-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.mood-page-header h1 {
+  font-size: 1.6em;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.mood-page-header p {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.mood-page-shelves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mood-page-shelf-tag {
+  background: #f3f4f6;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  color: #555;
+}
+
+.mood-genre-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 0.9em;
+  color: #666;
+  margin-right: 4px;
+}
+
+.mood-genre-filter button {
+  padding: 5px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 0.82em;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: #555;
+}
+
+.mood-genre-filter button.active {
+  background: #4A90D9;
+  color: #fff;
+  border-color: #4A90D9;
+}
+
+.mood-genre-filter button:hover:not(.active) {
+  background: #f3f4f6;
+}
+
+.mood-page-other {
+  margin-top: 40px;
+  text-align: center;
+  padding: 24px;
+}
+
+.mood-page-other h3 {
+  font-size: 1.1em;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.try-moods-link {
+  color: #4A90D9;
+  font-weight: 500;
+}
+
+.empty-state {
+  text-align: center;
+  color: #888;
+  padding: 40px 20px;
+}

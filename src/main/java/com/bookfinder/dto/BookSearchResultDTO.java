@@ -9,6 +9,7 @@ public class BookSearchResultDTO {
     private String imageUrl;
     private String publisher;
     private Integer pubYear;
+    private String genre;
     private Double score;
 
     public BookSearchResultDTO() {}
@@ -29,6 +30,8 @@ public class BookSearchResultDTO {
     public void setPublisher(String publisher) { this.publisher = publisher; }
     public Integer getPubYear() { return pubYear; }
     public void setPubYear(Integer pubYear) { this.pubYear = pubYear; }
+    public String getGenre() { return genre; }
+    public void setGenre(String genre) { this.genre = genre; }
     public Double getScore() { return score; }
     public void setScore(Double score) { this.score = score; }
 }

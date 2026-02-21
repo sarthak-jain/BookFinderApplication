@@ -9,6 +9,7 @@ public class RecommendationDTO {
     private String imageUrl;
     private Integer pubYear;
     private Double score;
+    private String genre;
     private String strategy;
 
     public RecommendationDTO() {}
@@ -29,6 +30,8 @@ public class RecommendationDTO {
     public void setPubYear(Integer pubYear) { this.pubYear = pubYear; }
     public Double getScore() { return score; }
     public void setScore(Double score) { this.score = score; }
+    public String getGenre() { return genre; }
+    public void setGenre(String genre) { this.genre = genre; }
     public String getStrategy() { return strategy; }
     public void setStrategy(String strategy) { this.strategy = strategy; }
 }

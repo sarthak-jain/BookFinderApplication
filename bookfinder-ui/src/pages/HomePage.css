@@ -21,11 +21,142 @@
   margin: 0 auto;
 }
 
-.popular-section {
+/* Mood Cards */
+.moods-section {
   margin-top: 32px;
 }
 
-.popular-section h2 {
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section-header h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.see-all-link {
+  color: #4A90D9;
+  font-weight: 500;
+  font-size: 0.9em;
+}
+
+.mood-cards-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+}
+
+.mood-card {
+  flex: 0 0 160px;
+  scroll-snap-align: start;
+  background: #fff;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mood-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.mood-card-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.mood-card-name {
+  font-weight: 600;
+  font-size: 0.88em;
+  color: #1a1a2e;
+}
+
+.mood-card-desc {
+  font-size: 0.75em;
+  color: #888;
+  line-height: 1.3;
+}
+
+/* Genre Cards */
+.genres-section {
+  margin-top: 40px;
+}
+
+.genres-section h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #1a1a2e;
+}
+
+.genre-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.genre-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.genre-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.genre-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4em;
+  flex-shrink: 0;
+}
+
+.genre-card-info h3 {
+  font-size: 1em;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 2px;
+}
+
+.genre-card-count {
+  font-size: 0.82em;
+  color: #888;
+}
+
+/* Trending */
+.trending-section {
+  margin-top: 40px;
+  margin-bottom: 32px;
+}
+
+.trending-section h2 {
   font-size: 1.5em;
   font-weight: 600;
   margin-bottom: 20px;

@@ -6,7 +6,7 @@ Base URL: `http://localhost:8080/api`
 
 ### List Books
 ```
-GET /api/books?page=0&size=20&sortBy=ratingsCount&direction=DESC
+GET /api/books?page=0&size=20&sortBy=ratingsCount&direction=DESC&genre=young_adult
 ```
 
 **Parameters:**
@@ -16,6 +16,7 @@ GET /api/books?page=0&size=20&sortBy=ratingsCount&direction=DESC
 | size | int | 20 | Items per page |
 | sortBy | string | ratingsCount | Sort field: `ratingsCount`, `title`, `pubYear`, `averageRating` |
 | direction | string | DESC | Sort direction: `ASC` or `DESC` |
+| genre | string | (none) | Optional genre filter: `young_adult`, `comics_graphic`, `mystery_thriller_crime`, `history_biography` |
 
 **Response:** `PaginatedResponse<BookSearchResultDTO>`
 
@@ -24,7 +25,7 @@ GET /api/books?page=0&size=20&sortBy=ratingsCount&direction=DESC
 GET /api/books/{bookId}
 ```
 
-**Response:** `BookDTO` with authors, shelves, and series. Returns 404 if not found.
+**Response:** `BookDTO` with authors (including names), shelves, series, and genre. Returns 404 if not found.
 
 ### Get Book Reviews
 ```
@@ -46,7 +47,7 @@ GET /api/books/{bookId}/similar?limit=10
 
 ### Full-Text Search
 ```
-GET /api/search?q=hunger+games&page=0&size=20&minRating=4&minYear=2000&maxYear=2020&shelves=dystopia,fantasy
+GET /api/search?q=hunger+games&page=0&size=20&minRating=4&minYear=2000&maxYear=2020&shelves=dystopia,fantasy&genre=young_adult
 ```
 
 **Parameters:**
@@ -59,6 +60,7 @@ GET /api/search?q=hunger+games&page=0&size=20&minRating=4&minYear=2000&maxYear=2
 | minYear | int | no | Minimum publication year |
 | maxYear | int | no | Maximum publication year |
 | shelves | string[] | no | Filter by shelf/genre names |
+| genre | string | no | Filter by genre key |
 
 **Response:** `PaginatedResponse<BookSearchResultDTO>` with relevance scores.
 
@@ -71,6 +73,85 @@ GET /api/search/autocomplete?q=hunger&limit=5
 
 ---
 
+## Genres
+
+### List Genres
+```
+GET /api/genres
+```
+
+**Response:** `List<GenreDTO>` with book counts.
+
+### Genre Books
+```
+GET /api/genres/{genreKey}/books?page=0&size=20&sortBy=ratingsCount&direction=DESC
+```
+
+**Response:** `PaginatedResponse<BookSearchResultDTO>` for the specified genre.
+
+### Genre Top Shelves
+```
+GET /api/genres/{genreKey}/top-shelves?limit=20
+```
+
+**Response:** `List<ShelfDTO>` — most common shelves within the genre.
+
+### All Top Shelves
+```
+GET /api/genres/all/top-shelves?limit=50
+```
+
+**Response:** `List<ShelfDTO>` — most common shelves across all genres (used by mood builder).
+
+---
+
+## Moods
+
+### List Moods
+```
+GET /api/moods
+```
+
+**Response:** `List<MoodDTO>` — 10 curated moods with name, description, color, and shelf mappings.
+
+### Get Mood Details
+```
+GET /api/moods/{moodKey}
+```
+
+**Response:** `MoodDTO` or 404.
+
+### Mood Books
+```
+GET /api/moods/{moodKey}/books?limit=20&genre=all
+```
+
+**Parameters:**
+| Parameter | Type | Default | Description |
+|-----------|------|---------|------------|
+| limit | int | 20 | Max results |
+| genre | string | all | Filter by genre key, or `all` for all genres |
+
+**Response:** `List<BookSearchResultDTO>` ranked by mood relevance (shelf match count).
+
+### Custom Mood Builder
+```
+POST /api/moods/custom/books
+```
+
+**Request Body:**
+```json
+{
+  "shelves": ["fantasy", "adventure", "humor"],
+  "genre": "young_adult",
+  "limit": 20
+}
+```
+
+**Response:** `List<BookSearchResultDTO>` matching the custom shelf combination.
+
+---
+
 ## Authors
 
 ### Get Author
@@ -78,7 +159,7 @@ GET /api/search/autocomplete?q=hunger&limit=5
 GET /api/authors/{authorId}
 ```
 
-**Response:** `AuthorDTO` or 404.
+**Response:** `AuthorDTO` (now includes `name` field) or 404.
 
 ### Get Author's Books
 ```
@@ -108,7 +189,7 @@ GET /api/recommendations/similar/{bookId}?strategy=hybrid&limit=10
 - `collaborative` — Users who rated this 4+ also rated other books 4+
 - `hybrid` — Weighted: 0.4*graph + 0.3*shelf + 0.3*collaborative
 
-**Response:** `List<RecommendationDTO>` with scores and strategy labels.
+**Response:** `List<RecommendationDTO>` with scores, strategy labels, and genre.
 
 ### Readers Also Liked
 ```
@@ -142,12 +223,6 @@ All graph endpoints return `GraphVisualizationDTO` directly consumable by vis-ne
 GET /api/graph/book/{bookId}?depth=1&includeUsers=false
 ```
 
-**Parameters:**
-| Parameter | Type | Default | Description |
-|-----------|------|---------|------------|
-| depth | int | 1 | Traversal depth (1-3) |
-| includeUsers | boolean | false | Include user nodes |
-
 ### Author Graph
 ```
 GET /api/graph/author/{authorId}
@@ -177,26 +252,9 @@ Shows recommendation paths with color-coded edges:
 GET /api/health
 ```
 
-**Response:**
-```json
-{
-  "status": "UP",
-  "neo4j": "connected",
-  "nodeCount": 33000
-}
-```
-
 ### Database Stats
 ```
 GET /api/stats
-```
-
-**Response:**
-```json
-{
-  "nodes": { "User": 15000, "Book": 10000, "Shelf": 1500, ... },
-  "relationships": { "SHELVED_AS": 150000, "INTERACTED": 50000, ... }
-}
 ```
 
 ---
@@ -218,9 +276,30 @@ GET /api/stats
   "imageUrl": "https://...",
   "url": "https://www.goodreads.com/book/show/2767052",
   "workId": "3706915",
-  "authors": [{"authorId": "153394", "role": ""}],
+  "genre": "young_adult",
+  "authors": [{"authorId": "153394", "name": "Suzanne Collins", "role": ""}],
   "shelves": [{"name": "dystopia", "count": 45000}],
   "seriesIds": ["73758"]
+}
+```
+
+### GenreDTO
+```json
+{
+  "key": "young_adult",
+  "name": "Young Adult",
+  "bookCount": 15000
+}
+```
+
+### MoodDTO
+```json
+{
+  "key": "adventurous",
+  "name": "Feeling Adventurous",
+  "description": "Epic quests and thrilling journeys",
+  "color": "#E67E22",
+  "shelves": ["adventure", "fantasy", "action", "quest", "epic"]
 }
 ```
 
@@ -231,6 +310,7 @@ GET /api/stats
   "title": "Catching Fire (The Hunger Games, #2)",
   "averageRating": 4.30,
   "ratingsCount": 2345678,
+  "genre": "young_adult",
   "score": 0.85,
   "strategy": "hybrid"
 }

@@ -29,7 +29,10 @@ public class AuthorService {
             if (!result.hasNext()) return null;
 
             Node node = result.next().get("a").asNode();
-            return new AuthorDTO(node.get("authorId").asString(""), node.get("role").asString(""));
+            return new AuthorDTO(
+                    node.get("authorId").asString(""),
+                    node.get("name").asString(""),
+                    node.get("role").asString(""));
         }
     }
 
@@ -59,6 +62,7 @@ public class AuthorService {
                 dto.setImageUrl(node.get("imageUrl").asString(""));
                 dto.setPublisher(node.get("publisher").asString(""));
                 dto.setPubYear(node.get("pubYear").asInt(0));
+                dto.setGenre(node.get("genre").asString(""));
                 books.add(dto);
             }
             return new PaginatedResponse<>(books, page, size, total);

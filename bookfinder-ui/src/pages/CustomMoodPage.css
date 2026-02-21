@@ -1,0 +1,128 @@
+.custom-mood-page {
+  padding-top: 32px;
+}
+
+.custom-mood-page h1 {
+  font-size: 2em;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.custom-mood-subtitle {
+  color: #666;
+  margin-bottom: 28px;
+}
+
+.custom-mood-shelves {
+  margin-bottom: 24px;
+}
+
+.custom-mood-shelves h3 {
+  font-size: 1em;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.shelf-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.shelf-chip {
+  padding: 6px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 0.82em;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: #555;
+}
+
+.shelf-chip:hover {
+  border-color: #4A90D9;
+  color: #4A90D9;
+}
+
+.shelf-chip.selected {
+  background: #4A90D9;
+  color: #fff;
+  border-color: #4A90D9;
+}
+
+.custom-mood-genre-filter {
+  margin-bottom: 24px;
+}
+
+.custom-mood-genre-filter .filter-label {
+  display: block;
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.genre-radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.genre-radio-group button {
+  padding: 5px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 0.82em;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: #555;
+}
+
+.genre-radio-group button.active {
+  background: #4A90D9;
+  color: #fff;
+  border-color: #4A90D9;
+}
+
+.genre-radio-group button:hover:not(.active) {
+  background: #f3f4f6;
+}
+
+.find-books-btn {
+  background: #4A90D9;
+  color: #fff;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 24px;
+}
+
+.find-books-btn:hover:not(:disabled) {
+  background: #357abd;
+}
+
+.find-books-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.custom-mood-results {
+  margin-top: 16px;
+}
+
+.custom-mood-results h2 {
+  font-size: 1.2em;
+  color: #1a1a2e;
+  margin-bottom: 16px;
+}
+
+.empty-state {
+  text-align: center;
+  color: #888;
+  padding: 40px 20px;
+}

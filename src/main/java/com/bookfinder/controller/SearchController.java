@@ -25,8 +25,9 @@ public class SearchController {
             @RequestParam(required = false) Double minRating,
             @RequestParam(required = false) Integer minYear,
             @RequestParam(required = false) Integer maxYear,
-            @RequestParam(required = false) List<String> shelves) {
-        return searchService.search(q, page, size, minRating, minYear, maxYear, shelves);
+            @RequestParam(required = false) List<String> shelves,
+            @RequestParam(required = false) String genre) {
+        return searchService.search(q, page, size, minRating, minYear, maxYear, shelves, genre);
     }
 
     @GetMapping("/autocomplete")

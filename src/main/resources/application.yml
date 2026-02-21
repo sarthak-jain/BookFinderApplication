@@ -15,10 +15,42 @@ server:
 bookfinder:
   data:
     dir: ${DATA_DIR:./data}
-    books-file: goodreads_books_young_adult.json
-    interactions-file: goodreads_interactions_young_adult.json
-    reviews-file: goodreads_reviews_young_adult.json
-    subset-size: 10000
-    max-interactions: 50000
-    max-reviews: 50000
+    authors-file: goodreads_book_authors.json/goodreads_book_authors.json
     batch-size: 500
+    genres:
+      - name: Young Adult
+        key: young_adult
+        folder: "."
+        books-file: goodreads_books_young_adult.json
+        interactions-file: goodreads_interactions_young_adult.json
+        reviews-file: goodreads_reviews_young_adult.json
+        subset-size: 15000
+        max-interactions: 30000
+        max-reviews: 30000
+      - name: Comics & Graphic
+        key: comics_graphic
+        folder: comics_graphic
+        books-file: goodreads_books_comics_graphic.json/goodreads_books_comics_graphic.json
+        interactions-file: goodreads_interactions_comics_graphic.json/goodreads_interactions_comics_graphic.json
+        reviews-file: goodreads_reviews_comics_graphic.json/goodreads_reviews_comics_graphic.json
+        subset-size: 15000
+        max-interactions: 30000
+        max-reviews: 30000
+      - name: Mystery, Thriller & Crime
+        key: mystery_thriller_crime
+        folder: mystery_thriller_crime
+        books-file: goodreads_books_mystery_thriller_crime.json/goodreads_books_mystery_thriller_crime.json
+        interactions-file: goodreads_interactions_mystery_thriller_crime.json/goodreads_interactions_mystery_thriller_crime.json
+        reviews-file: goodreads_reviews_mystery_thriller_crime.json/goodreads_reviews_mystery_thriller_crime.json
+        subset-size: 15000
+        max-interactions: 30000
+        max-reviews: 30000
+      - name: History & Biography
+        key: history_biography
+        folder: history_biography
+        books-file: goodreads_books_history_biography.json/goodreads_books_history_biography.json
+        interactions-file: goodreads_interactions_history_biography.json/goodreads_interactions_history_biography.json
+        reviews-file: goodreads_reviews_history_biography.json/goodreads_reviews_history_biography.json
+        subset-size: 15000
+        max-interactions: 30000
+        max-reviews: 30000
