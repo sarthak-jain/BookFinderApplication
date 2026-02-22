@@ -1,6 +1,8 @@
 # BookFinder - Book Recommendation Engine
 
-A full-stack book recommendation engine powered by **Neo4j graph database**, **Spring Boot**, and **React**. Uses the Goodreads Young Adult dataset (93K books, 34.9M interactions) to deliver graph-powered recommendations through four distinct strategies.
+A full-stack book recommendation engine powered by **Neo4j graph database**, **Spring Boot**, and **React**. Uses Goodreads datasets across 4 genres (60K books, 120K+ interactions) to deliver graph-powered recommendations, mood-based discovery, and interactive graph visualization.
+
+**Live Demo:** [https://sarthak-jain.github.io/BookFinderApplication/](https://sarthak-jain.github.io/BookFinderApplication/)
 
 ## Tech Stack
 
@@ -14,6 +16,8 @@ A full-stack book recommendation engine powered by **Neo4j graph database**, **S
 
 ## Features
 
+- **Multi-Genre Library** — 4 genres: Young Adult, Comics & Graphic, Mystery/Thriller/Crime, History & Biography (15K books each)
+- **Mood-Based Discovery** — 10 curated moods + custom mood builder using shelf combinations
 - **Full-Text Search** with autocomplete, filters (rating, year range, genre)
 - **4 Recommendation Strategies**:
   - **Graph Similarity** — 1-hop and 2-hop SIMILAR_TO traversal
@@ -22,26 +26,26 @@ A full-stack book recommendation engine powered by **Neo4j graph database**, **S
   - **Hybrid** — weighted blend (0.4 graph + 0.3 shelf + 0.3 collaborative)
 - **Interactive Graph Visualization** — vis-network with color-coded nodes, click-to-navigate
 - **Book Detail Pages** — reviews, ratings, shelves, author links
-- **Explore by Genre** — browse top books per shelf with graph view
+- **Browse by Genre** — genre pages with top shelves and graph view
 
 ## Architecture
 
 ```
-React Frontend (localhost:3000)
+React Frontend (GitHub Pages)
         |
         v
-Spring Boot REST API (localhost:8080)
-   /api/books, /api/search, /api/recommendations, /api/graph
+Spring Boot REST API (Railway)
+   /api/books, /api/search, /api/recommendations, /api/graph, /api/genres, /api/moods
         |
         v
-Neo4j Graph Database (AuraDB or local)
-   Book, Author, User, Shelf, Series nodes
-   WROTE, SIMILAR_TO, SHELVED_AS, INTERACTED, REVIEWED relationships
+Neo4j Graph Database (AuraDB)
+   Book, Author, User, Shelf, Series, Genre nodes
+   WROTE, SIMILAR_TO, SHELVED_AS, INTERACTED, REVIEWED, BELONGS_TO relationships
 ```
 
 ## Neo4j Graph Schema
 
-**Nodes:** `Book`, `Author`, `User`, `Shelf`, `Series`
+**Nodes:** `Book`, `Author`, `User`, `Shelf`, `Series`, `Genre`
 
 **Relationships:**
 - `(:Author)-[:WROTE]->(:Book)` — authorship (with role)
@@ -74,10 +78,12 @@ Or edit `src/main/resources/application.yml` directly.
 
 ### 2. Load Data
 
-Place the Goodreads Young Adult dataset files in `data/`:
-- `goodreads_books_young_adult.json`
-- `goodreads_interactions_young_adult.json`
-- `goodreads_reviews_young_adult.json`
+Place the Goodreads dataset files in `data/` with genre subfolders:
+- `data/goodreads_books_young_adult.json` (Young Adult)
+- `data/comics_graphic/` (Comics & Graphic)
+- `data/mystery_thriller_crime/` (Mystery, Thriller & Crime)
+- `data/history_biography/` (History & Biography)
+- `data/goodreads_book_authors.json/goodreads_book_authors.json` (Author metadata)
 
 Run the data loader:
 
@@ -85,7 +91,7 @@ Run the data loader:
 mvn spring-boot:run -Dspring-boot.run.profiles=load-data
 ```
 
-This selects the top 10K books by ratings_count and loads ~50K interactions and ~50K reviews. Takes 2-5 minutes depending on network speed.
+This selects the top 15K books per genre by ratings_count and loads interactions and reviews for all 4 genres.
 
 ### 3. Start Backend
 
@@ -105,15 +111,12 @@ npm start
 
 Frontend runs at `http://localhost:3000` with proxy to backend.
 
-### 5. Production Build
+### 5. Deployment
 
-```bash
-cd bookfinder-ui
-npm run build
-# Copy build output to Spring Boot static resources:
-cp -r build/* ../src/main/resources/static/
-# Restart backend — it now serves the SPA at localhost:8080
-```
+The app is deployed via GitHub:
+- **Frontend:** GitHub Pages (auto-deploys on push via GitHub Actions)
+- **Backend:** Railway (auto-deploys from GitHub repo via Dockerfile)
+- **Database:** Neo4j AuraDB (free tier)
 
 ## API Reference
 
@@ -135,6 +138,12 @@ cp -r build/* ../src/main/resources/static/
 | `GET /api/graph/author/{authorId}` | Author-centered graph |
 | `GET /api/graph/shelf/{shelfName}` | Shelf-centered graph |
 | `GET /api/graph/recommendations/{bookId}` | Recommendation paths graph |
+| `GET /api/genres` | List genres with book counts |
+| `GET /api/genres/{key}/books` | Paginated genre books |
+| `GET /api/genres/{key}/top-shelves` | Genre shelf breakdown |
+| `GET /api/moods` | 10 curated moods |
+| `GET /api/moods/{key}/books` | Mood-matched books |
+| `POST /api/moods/custom/books` | Custom mood builder |
 | `GET /api/health` | Health check with Neo4j status |
 | `GET /api/stats` | Node and relationship counts |
 
@@ -142,8 +151,8 @@ cp -r build/* ../src/main/resources/static/
 
 | Scale | Nodes | Relationships | Storage | AuraDB Tier |
 |-------|-------|--------------|---------|-------------|
-| Demo (this build) | ~33K | ~342K | ~49 MB | Free |
-| Full YA dataset | ~633K | ~38.7M | ~4.5 GB | Professional |
+| Demo (4 genres) | ~129K | ~376K | ~70 MB | Free |
+| Full dataset (4 genres) | ~2.5M | ~100M+ | ~15 GB | Professional |
 
 ## Documentation
 
@@ -153,4 +162,4 @@ cp -r build/* ../src/main/resources/static/
 
 ## Data Source
 
-[Goodreads Book Graph Datasets](https://mengtingwan.github.io/data/goodreads.html) — Young Adult genre subset.
+[Goodreads Book Graph Datasets](https://mengtingwan.github.io/data/goodreads.html) — Young Adult, Comics & Graphic, Mystery/Thriller/Crime, and History & Biography genre subsets.
