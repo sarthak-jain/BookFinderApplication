@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'bookfinder-ui/**'
+      - '.github/workflows/deploy-frontend.yml'
   workflow_dispatch:
 
 permissions:
