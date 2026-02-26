@@ -70,6 +70,7 @@ public class GenreService {
             while (result.hasNext()) {
                 books.add(toSearchResult(result.next().get("b").asNode()));
             }
+            books = DeduplicationUtil.deduplicateBooks(books);
             return new PaginatedResponse<>(books, page, size, total);
         }
     }

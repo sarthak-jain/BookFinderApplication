@@ -88,6 +88,7 @@ public class SearchService {
                 dto.setScore(rec.get("score").asDouble(0));
                 books.add(dto);
             }
+            books = DeduplicationUtil.deduplicateBooks(books);
             return new PaginatedResponse<>(books, page, size, total);
         }
     }
@@ -102,7 +103,7 @@ public class SearchService {
         try (Session session = session()) {
             var result = session.run("""
                 CALL db.index.fulltext.queryNodes('bookSearch', $query) YIELD node AS b, score
-                RETURN b, score
+                RETURN DISTINCT b, score
                 ORDER BY score DESC
                 LIMIT $limit
                 """, Map.of("query", wildcardQuery, "limit", limit));
@@ -112,7 +113,7 @@ public class SearchService {
                 Record rec = result.next();
                 books.add(toSearchResult(rec.get("b").asNode()));
             }
-            return books;
+            return DeduplicationUtil.deduplicateBooks(books);
         }
     }
 

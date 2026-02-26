@@ -38,7 +38,7 @@ public class RecommendationService {
         try (Session session = session()) {
             var result = session.run("""
                 MATCH (b:Book)-[:SHELVED_AS]->(s:Shelf {name: $shelfName})
-                RETURN b
+                RETURN DISTINCT b
                 ORDER BY b.ratingsCount DESC
                 LIMIT $limit
                 """, Map.of("shelfName", shelfName, "limit", limit));
@@ -51,7 +51,7 @@ public class RecommendationService {
                 dto.setScore((double) node.get("ratingsCount").asInt(0));
                 recs.add(dto);
             }
-            return recs;
+            return DeduplicationUtil.deduplicateRecommendations(recs);
         }
     }
 
@@ -59,7 +59,7 @@ public class RecommendationService {
         try (Session session = session()) {
             var result = session.run("""
                 MATCH (a:Author {authorId: $authorId})-[:WROTE]->(b:Book)
-                RETURN b
+                RETURN DISTINCT b
                 ORDER BY b.ratingsCount DESC
                 LIMIT $limit
                 """, Map.of("authorId", authorId, "limit", limit));
@@ -71,7 +71,7 @@ public class RecommendationService {
                 dto.setStrategy("author");
                 recs.add(dto);
             }
-            return recs;
+            return DeduplicationUtil.deduplicateRecommendations(recs);
         }
     }
 
@@ -96,7 +96,7 @@ public class RecommendationService {
                 dto.setScore(rec.get("paths").asDouble(1));
                 recs.add(dto);
             }
-            return recs;
+            return DeduplicationUtil.deduplicateRecommendations(recs);
         }
     }
 
@@ -121,7 +121,7 @@ public class RecommendationService {
                 dto.setScore(rec.get("sharedShelves").asDouble(0));
                 recs.add(dto);
             }
-            return recs;
+            return DeduplicationUtil.deduplicateRecommendations(recs);
         }
     }
 
@@ -145,7 +145,7 @@ public class RecommendationService {
                 dto.setScore(rec.get("commonUsers").asDouble(0));
                 recs.add(dto);
             }
-            return recs;
+            return DeduplicationUtil.deduplicateRecommendations(recs);
         }
     }
 
@@ -177,7 +177,7 @@ public class RecommendationService {
             bookMap.putIfAbsent(rec.getBookId(), rec);
         }
 
-        return combinedScores.entrySet().stream()
+        List<RecommendationDTO> merged = combinedScores.entrySet().stream()
                 .sorted(Map.Entry.<String, Double>comparingByValue().reversed())
                 .limit(limit)
                 .map(e -> {
@@ -187,6 +187,7 @@ public class RecommendationService {
                     return dto;
                 })
                 .collect(Collectors.toList());
+        return DeduplicationUtil.deduplicateRecommendations(merged);
     }
 
     private void normalizeScores(List<RecommendationDTO> recs) {

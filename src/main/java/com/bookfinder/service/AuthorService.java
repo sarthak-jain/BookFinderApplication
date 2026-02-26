@@ -2,7 +2,6 @@ package com.bookfinder.service;
 
 import com.bookfinder.dto.*;
 import org.neo4j.driver.Driver;
-import org.neo4j.driver.Record;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.SessionConfig;
 import org.neo4j.driver.types.Node;
@@ -65,6 +64,7 @@ public class AuthorService {
                 dto.setGenre(node.get("genre").asString(""));
                 books.add(dto);
             }
+            books = DeduplicationUtil.deduplicateBooks(books);
             return new PaginatedResponse<>(books, page, size, total);
         }
     }

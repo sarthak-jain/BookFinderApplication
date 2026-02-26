@@ -57,6 +57,7 @@ public class BookService {
                 Node node = result.next().get("b").asNode();
                 books.add(toSearchResult(node));
             }
+            books = DeduplicationUtil.deduplicateBooks(books);
             return new PaginatedResponse<>(books, page, size, total);
         }
     }
@@ -159,7 +160,7 @@ public class BookService {
         try (Session session = session()) {
             var result = session.run("""
                 MATCH (b:Book {bookId: $bookId})-[:SIMILAR_TO]->(sim:Book)
-                RETURN sim
+                RETURN DISTINCT sim
                 ORDER BY sim.ratingsCount DESC
                 LIMIT $limit
                 """, Map.of("bookId", bookId, "limit", limit));
@@ -168,7 +169,7 @@ public class BookService {
             while (result.hasNext()) {
                 books.add(toSearchResult(result.next().get("sim").asNode()));
             }
-            return books;
+            return DeduplicationUtil.deduplicateBooks(books);
         }
     }
 

@@ -106,7 +106,7 @@ public class MoodService {
                 dto.setScore(rec.get("shelfMatches").asDouble(0));
                 books.add(dto);
             }
-            return books;
+            return DeduplicationUtil.deduplicateBooks(books);
         }
     }
 
